@@ -35,9 +35,10 @@ SELECT count(*) FROM customers;
 SELECT count(*) FROM products;
 
 -- What is the total available on-hand quantity of diet pepsi?
-SELECT sum(on_hand) FROM warehouse_product
+SELECT products.description, sum(on_hand) FROM warehouse_product
 JOIN products ON warehouse_product.product_id = products.id
-WHERE products.description = 'diet pepsi';
+WHERE products.description = 'diet pepsi'
+GROUP BY products.description;
 
 -- Stretch
 -- How much was the total cost for each order?
