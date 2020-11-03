@@ -29,15 +29,37 @@ JOIN customers ON addresses.customer_id = customers.id
 GROUP BY CONCAT(first_name,' ',last_name);
 
 -- How many customers do we have?
+SELECT count(*) FROM customers;
 
 -- How many products do we carry?
+SELECT count(*) FROM products;
 
 -- What is the total available on-hand quantity of diet pepsi?
+SELECT sum(on_hand) FROM warehouse_product
+JOIN products ON warehouse_product.product_id = products.id
+WHERE products.description = 'diet pepsi';
 
 -- Stretch
 -- How much was the total cost for each order?
+SELECT orders.id, SUM(unit_price) FROM products
+JOIN line_items ON products.id = line_items.product_id
+JOIN orders ON line_items.order_id = orders.id
+GROUP BY orders.id
+ORDER BY orders.id ASC;
 
 -- How much has each customer spent in total?
+SELECT CONCAT(customers.first_name,' ',customers.last_name), sum(unit_price) FROM products
+JOIN line_items ON line_items.product_id = products.id
+JOIN orders ON orders.id = line_items.order_id
+JOIN addresses ON addresses.id = orders.address_id
+JOIN customers ON customers.id = addresses.customer_id
+GROUP BY CONCAT(customers.first_name,' ',customers.last_name);
 
 -- How much has each customer spent in total? Customers who have spent $0 should still show up in the table. It should say 0, not NULL (research coalesce).
+SELECT CONCAT(customers.first_name,' ',customers.last_name), COALESCE(sum(unit_price),0) FROM products
+FULL OUTER JOIN line_items ON line_items.product_id = products.id
+FULL OUTER JOIN orders ON orders.id = line_items.order_id
+FULL OUTER JOIN addresses ON addresses.id = orders.address_id
+FULL OUTER JOIN customers ON customers.id = addresses.customer_id
+GROUP BY CONCAT(customers.first_name,' ',customers.last_name);
 
